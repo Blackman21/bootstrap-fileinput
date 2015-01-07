@@ -8,6 +8,10 @@ version 4.1.5
 4. (enh #106): Enhance events for ajax requests and enable cancelling sync uploads
 5. (enh #108): Add nuget package.
 6. (bug #112): Fix undefined filestack for individual file upload within preview.
+7. (bug #113): Icon layout template undefined when using user template.
+8. (bug #114): Prevent multiple file selection when using single file configuration.
+9. (enh #115): Autosize file caption responsively on window resize.
+10. (enh #116): Hide remove and upload buttons until unless file(s) are selected.
 
 version 4.1.4
 =============
