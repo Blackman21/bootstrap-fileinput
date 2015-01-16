@@ -1,3 +1,10 @@
+version 4.1.6
+=============
+**Date:** 16-Jan-2015
+
+1. (enh #124): Allow submission of extra data even if no files are selected.
+2. (enh #131): Allow empty values in extra data to be submitted.
+
 version 4.1.5
 =============
 **Date:** 12-Jan-2015
