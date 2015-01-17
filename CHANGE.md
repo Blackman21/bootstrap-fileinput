@@ -1,6 +1,13 @@
+version 4.1.6
+=============
+**Date:** 16-Jan-2015
+
+1. (enh #124): Allow submission of extra data even if no files are selected.
+2. (enh #131): Allow empty values in extra data to be submitted.
+
 version 4.1.5
 =============
-**Date:** 07-Jan-2015
+**Date:** 12-Jan-2015
 
 1. (bug #100, #101): Set right params for error thrown during reading of files.
 2. (bug #104): Fix formdata not defined.
@@ -12,6 +19,9 @@ version 4.1.5
 8. (bug #114): Prevent multiple file selection when using single file configuration.
 9. (enh #115): Autosize file caption responsively on window resize.
 10. (enh #116): Hide remove and upload buttons until unless file(s) are selected.
+11. (enh #119): Enhance caption to include ellipsis for long file names
+12. (bug #120): Correct multiple iterations of upload for async batch uploads.
+13. (enh #121): Animate progress bars by default for upload progress.
 
 version 4.1.4
 =============

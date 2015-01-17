@@ -7,7 +7,7 @@ The plugin incorporates a simple HTML markup with enhanced CSS styling of a HTML
 
 ![File Input Screenshot](https://lh3.googleusercontent.com/-3FiEmc_okc4/VBw_d2LBAJI/AAAAAAAAAL8/KbVj5X9Dus0/w596-h454-no/FileInput.jpg)
 
-> NOTE: The latest version of the plugin v4.1.5 has been released. Refer the [CHANGE LOG](https://github.com/kartik-v/bootstrap-fileinput/blob/master/CHANGE.md) for details. 
+> NOTE: The latest version of the plugin v4.1.6 has been released. Refer the [CHANGE LOG](https://github.com/kartik-v/bootstrap-fileinput/blob/master/CHANGE.md) for details. 
 
 ## Features  
 
@@ -36,9 +36,7 @@ The plugin incorporates a simple HTML markup with enhanced CSS styling of a HTML
 11. Upload action defaults to form submit. Supports an upload route/server action parameter for custom ajax based upload.
 12. Triggers JQuery events for advanced development. Events currently available are `filereset`, `fileclear`, `filecleared`, `fileloaded`, and `fileerror`.
 13. Disabled and readonly file input support.
-14. Dynamically auto size the file captions for long file names exceeding container width. New property `autoFitCaption` 
-  is added which defaults to `true`. When this is `true` the plugin will auto fit caption text within the container dynamically
-  and responsively based on window size.
+14. Dynamically auto size the file captions for long file names exceeding container width. 
 15. Raise new `fileimageuploaded` event that fires after image is completely loaded on the preview container.
 16. Autosize preview images when they exceed the size of the preview container.
 17. Completely templatized and extensible to allow configuration of the file-input the way the developer wants.
@@ -155,9 +153,6 @@ _boolean_ whether to display the file upload button. Defaults to `true`. This wi
 
 #### showCancel
 _boolean_ whether to display the file upload cancel button. Defaults to `true`. This will be only enabled and displayed when an AJAX upload is in process.
-
-#### autoFitCaption
-_boolean_ whether to automatically size the file caption text to fit the container for long file names overflowing the container. Defaults to `true`. When set to true, the caption text will be dynamically sized. Shrunk file names will be appended with ellipsis, and the complete filename will be displayed as a title on hover.
 
 #### captionClass
 _string_ any additional CSS class to append to the caption container.
@@ -317,6 +312,7 @@ The `layoutTemplates` if not set will default to:
         '</div>',
     icon: '<span class="glyphicon glyphicon-file kv-caption-icon"></span>',
     caption: '<div tabindex="-1" class="form-control file-caption {class}">\n' +
+        '   <span class="file-caption-ellipsis">&hellip;</span>\n' +
         '   <div class="file-caption-name"></div>\n' +
         '</div>',
     modal: '<div id="{id}" class="modal fade">\n' +
@@ -333,7 +329,7 @@ The `layoutTemplates` if not set will default to:
         '  </div>\n' +
         '</div>',
     progress: '<div class="progress">\n' +
-        '    <div class="progress-bar progress-bar-success progress-bar-striped text-center" role="progressbar" aria-valuenow="{percent}" aria-valuemin="0" aria-valuemax="100" style="width:{percent}%;">\n' +
+        '    <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="{percent}" aria-valuemin="0" aria-valuemax="100" style="width:{percent}%;">\n' +
         '        {percent}%\n' +
         '     </div>\n' +
         '</div>',
@@ -343,14 +339,13 @@ The `layoutTemplates` if not set will default to:
         '</div>',
     actions: '<div class="file-actions">\n' +
         '    <div class="file-footer-buttons">\n' +
-        '        {upload}{delete}' +
+        '        {upload}{delete}{other}' +
         '    </div>\n' +
         '    <div class="file-upload-indicator" tabindex="-1" title="{indicatorTitle}">{indicator}</div>\n' +
         '    <div class="clearfix"></div>\n' +
         '</div>',
     actionDelete: '<button type="button" class="kv-file-remove {removeClass}" title="{removeTitle}"{dataUrl}{dataKey}>{removeIcon}</button>\n',
     actionUpload: '<button type="button" class="kv-file-upload {uploadClass}" title="{uploadTitle}">{uploadIcon}</button>\n'
-
 };
 ```
 
@@ -440,17 +435,17 @@ The `previewTemplates` if not set will default to:
 
 The values of the constants used in the above templates are as follows:
 
-```
+```js
 STYLE_SETTING = 'style="width:{width};height:{height};"',
-OBJECT_PARAMS = '      &lt;param name="controller" value="true" />\n' +
-    '      &lt;param name="allowFullScreen" value="true" />\n' +
-    '      &lt;param name="allowScriptAccess" value="always" />\n' +
-    '      &lt;param name="autoPlay" value="false" />\n' +
-    '      &lt;param name="autoStart" value="false" />\n'+
-    '      &lt;param name="quality" value="high" />\n',
-DEFAULT_PREVIEW = '&lt;div class="file-preview-other">\n' +
-    '       &lt;i class="glyphicon glyphicon-file">&lt;/i>\n' +
-    '   &lt;/div>'
+OBJECT_PARAMS = '      <param name="controller" value="true" />\n' +
+    '      <param name="allowFullScreen" value="true" />\n' +
+    '      <param name="allowScriptAccess" value="always" />\n' +
+    '      <param name="autoPlay" value="false" />\n' +
+    '      <param name="autoStart" value="false" />\n'+
+    '      <param name="quality" value="high" />\n',
+DEFAULT_PREVIEW = '<div class="file-preview-other">\n' +
+    '       <i class="glyphicon glyphicon-file"></i>\n' +
+    '   </div>'
 ```
 
 #### allowedFileTypes
