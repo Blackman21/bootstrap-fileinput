@@ -1,9 +1,26 @@
+version 4.1.7
+=============
+**Date**: 31-Jan-2015
+
+1. (enh #149): Custom tags support for layoutTemplates and previewTemplates (new properties `customLayoutTags` and `customPreviewTags` included).
+2. (enh #151): New `filebatchselected` event triggered after every batch of files are selected.
+3. (enh #152): New faster `replaceAll` method instead of regexp parsing to replace tags in templates.
+4. (enh #153): Improve error handler for trapping FileReader security exceptions and new property `msgFileSecured` will display the security exception message.
+5. (enh #154): Code cleanup and restructure for JS lint changes (using JSHint Code cleanup library).
+6. (enh #155): Allow display of long file names without spaces/word breaks.
+
 version 4.1.6
 =============
 **Date:** 16-Jan-2015
 
 1. (enh #124): Allow submission of extra data even if no files are selected.
 2. (enh #131): Allow empty values in extra data to be submitted.
+<<<<<<< HEAD
+=======
+3. (enh #136):Create new upload method that can be called externally.
+4. (enh #137): Trigger new events - `filedisabled` and `fileenabled`.
+5. (enh #139): Reset file stack correctly on ajax upload completion.
+>>>>>>> b8555e019cf18e87472e00839510c653e00ee1f7
 
 version 4.1.5
 =============
