@@ -108,10 +108,10 @@ You can also manually install the plugin easily to your project. Just download t
 Step 1: Load the following assets in your header. 
 
 ```html
-<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
 <link href="path/to/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<link href="path/to/js/fileinput.min.js" media="all" rel="stylesheet" type="text/javascript" />
 ```
 
 If you noticed, you need to load the `jquery.min.js` and `bootstrap.min.css` in addition to the `fileinput.min.css` and `fileinput.min.js`.
@@ -284,6 +284,10 @@ The `preview` and `caption` templates can understand the following special tags 
 
 - `{class}`: the CSS class as set in the `mainClass`, `captionClass` or `previewClass` properties.
 
+Similarly, the `progress` layout template can understand the following special tags which will be replaced:
+
+- `{class}`: the CSS class as set in the `progressClass` or `progressCompleteClass` properties.
+
 The `layoutTemplates` if not set will default to:
 
 ```js
@@ -329,7 +333,7 @@ The `layoutTemplates` if not set will default to:
         '  </div>\n' +
         '</div>',
     progress: '<div class="progress">\n' +
-        '    <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="{percent}" aria-valuemin="0" aria-valuemax="100" style="width:{percent}%;">\n' +
+        '    <div class="{class}" role="progressbar" aria-valuenow="{percent}" aria-valuemin="0" aria-valuemax="100" style="width:{percent}%;">\n' +
         '        {percent}%\n' +
         '     </div>\n' +
         '</div>',
@@ -784,6 +788,11 @@ _string_ the progress message displayed in caption window when multiple (more th
 
 - `{n}`: the number of files selected.
 
+#### progressClass
+_string_ the upload progress bar CSS class to be applied when AJAX upload is in process (applicable only for ajax uploads). Defaults to `progress-bar progress-bar-success progress-bar-striped active`. 
+
+#### progressCompleteClass
+_string_ the upload progress bar CSS class to be applied when AJAX upload is complete. Defaults to `progress-bar progress-bar-success`. 
 
 #### previewFileType
 _string_ the type of files that are to be displayed in the preview window. Defaults to `image`. Can be one of the following:
@@ -884,6 +893,9 @@ _string_ markup for additional action buttons to display within the initial prev
 
 #### textEncoding
 _string_ the encoding to be used while reading a text file. Applicable only for previewing text files. Defaults to `UTF-8`. 
+
+#### ajaxSettings
+_object_ additional ajax settings to pass to the plugin before submitting the ajax request. Applicable only for ajax uploads. This can be useful to pass additional tokens to headers or one can use it for setting other ajax options for advanced cases. Refer the [jQuery ajax documentation](http://api.jquery.com/jQuery.ajax/) for the various settings you can configure.
 
 ### Plugin Events
 The plugin supports these events:
