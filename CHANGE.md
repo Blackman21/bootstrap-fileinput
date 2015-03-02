@@ -1,3 +1,17 @@
+version 4.1.8
+=============
+**Date**: 24-Feb-2015
+
+1. (bug #171): Fix typo for files validation.
+2. (enh #167, #173): New `deleteExtraData` property for ajax deletions.
+3. (enh #174): New `deleteUrl` property.
+4. (enh #175): Ability to override delete extra data in `initialPreviewConfig`.
+5. (enh #176): Wrong file in README installation steps fixed.
+6. (enh #177): Trigger filebatchpreupload if showPreview is `false`.
+7. (enh #178): Updated README for cancel button configuration.
+8. (enh #179): Validate and cast `maxFileSize`, `maxFileCount`, and `initialPreviewCount` to numeric - even if they have been setup as a string.
+9. (enh #181): Fix change event triggered for IE 11 when file input is set to empty.
+
 version 4.1.7
 =============
 **Date**: 13-Feb-2015
