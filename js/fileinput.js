@@ -517,7 +517,7 @@
             self.$preview.find('.file-preview-frame').each(function () {
                 var $thumb = $(this), ind = $thumb.attr('data-fileindex'),
                     file = self.filestack[ind];
-                if (ind == -1) {
+                if (ind === -1) {
                     return;
                 }
                 if (file !== undefined) {
@@ -741,7 +741,7 @@
             self.$preview.find('.kv-file-remove').each(function () {
                 var $el = $(this), $frame = $el.closest('.file-preview-frame'), index = $el.data('index'), 
                     config = isEmpty(self.initialPreviewConfig[index]) ? null : self.initialPreviewConfig[index],
-                    extraData = isEmpty(config) || isEmpty(config['extra']) ? deleteExtraData : config['extra'],
+                    extraData = isEmpty(config) || isEmpty(config.extra) ? deleteExtraData : config.extra,
                     vUrl = $el.data('url') || self.deleteUrl, vKey = $el.data('key'), $content;
                 if (typeof extraData === "function") { 
                     extraData = extraData();
@@ -754,7 +754,7 @@
                         url: vUrl,
                         type: 'POST',
                         dataType: 'json',
-                        data: {key: vKey, extraData: extraData},
+                        data: $.extend({key: vKey}, extraData),
                         beforeSend: function (jqXHR) {
                             addCss($frame, 'file-uploading');
                             addCss($el, 'disabled');
@@ -765,7 +765,10 @@
                                 self.raise('filedeleted', [vKey, jqXHR, extraData]);
                             } else {
                                 self.showError(data.error, extraData, $el.attr('id'), vKey, 'filedeleteerror', jqXHR);
+                                $frame.removeClass('file-uploading');
+                                $el.removeClass('disabled');
                                 resetProgress();
+                                return;
                             }
                             $frame.removeClass('file-uploading').addClass('file-deleted');
                             $frame.fadeOut('slow', function () {
