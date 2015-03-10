@@ -6,7 +6,7 @@ An enhanced HTML 5 file input for Bootstrap 3.x with file preview for various fi
 
 This plugin was initially inspired by [this blog article](http://www.abeautifulsite.net/blog/2013/08/whipping-file-inputs-into-shape-with-bootstrap-3/) and [Jasny's File Input plugin](http://jasny.github.io/bootstrap/javascript/#fileinput). But the plugin has now matured with various additional features and enhancements to be a complete (yet simple) file management tool and solution for web developers. 
 
-> NOTE: The latest version of the plugin v4.1.7 has been released. Refer the [CHANGE LOG](https://github.com/kartik-v/bootstrap-fileinput/blob/master/CHANGE.md) for details. 
+> NOTE: The latest version of the plugin v4.1.8 has been released. Refer the [CHANGE LOG](https://github.com/kartik-v/bootstrap-fileinput/blob/master/CHANGE.md) for details. 
 
 ## Features  
 
@@ -631,6 +631,9 @@ This is by default setup as following:
 }
 ```
 
+#### previewFileIcon
+_string_ the icon to be shown in each preview file thumbnail when an unreadable file type for preview is detected. Defaults to `<i class="glyphicon glyphicon-file"></i>`.
+
 #### browseLabel
 _string_ the label to display for the file picker/browse button. Defaults to `Browse &hellip;`.
 
@@ -950,6 +953,10 @@ _string_ the encoding to be used while reading a text file. Applicable only for 
 
 #### ajaxSettings
 _object_ additional ajax settings to pass to the plugin before submitting the ajax request. Applicable only for ajax uploads. This can be useful to pass additional tokens to headers or one can use it for setting other ajax options for advanced cases. Refer the [jQuery ajax documentation](http://api.jquery.com/jQuery.ajax/) for the various settings you can configure.
+
+#### ajaxDeleteSettings
+_object_ additional ajax settings to pass to the plugin before submitting the delete ajax request in each initial preview thumbnail. Applicable only for ajax deletions. This can be useful to pass additional tokens to headers or one can use it for setting other ajax options for advanced cases. Refer the [jQuery ajax documentation](http://api.jquery.com/jQuery.ajax/) for the various settings you can configure.
+
 
 ### Plugin Events
 The plugin supports these events:

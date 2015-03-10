@@ -12,6 +12,14 @@ version 4.1.8
 8. (enh #179): Validate and cast `maxFileSize`, `maxFileCount`, and `initialPreviewCount` to numeric - even if they have been setup as a string.
 9. (enh #181): Fix change event triggered for IE 11 when file input is set to empty.
 10. (enh #183): Delete extra data enhancements.
+11. (enh #184): Fix documentation for filedeleted event.
+12. (enh #187): New property `previewFileIcon` to configure file icon shown in preview for unreadable file types.
+13. (enh #188): Clear fileinput more correctly for all browsers when initialPreview is set enhancement
+14. (enh #189): Reinitialize initial preview delete events correctly on file selection.
+15. (enh #192): Ability to extend and add one's own ajax settings.
+    - New property `ajaxDeleteSettings` to help extend and add to delete ajax settings. 
+    - `ajaxSettings` to help extend and add upload ajax settings
+16. (bug #193): Better validation for triggering `filebatchuploadcomplete` on async batch upload completion.
 
 version 4.1.7
 =============
