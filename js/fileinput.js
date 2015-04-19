@@ -1,6 +1,6 @@
 /*!
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version 4.1.8
+ * @version 4.1.9
  *
  * File input styled for Bootstrap 3.0 that utilizes HTML5 File Input's advanced 
  * features including the FileReader API. 
@@ -63,7 +63,7 @@
                 var ind = 'init_' + i, data = previewCache.data[id],
                     previewId = data.initId + '-' + ind, out;
                 isDisabled = isDisabled === undefined ? true : isDisabled;
-                if (data.content[i] === undefined) {
+                if (data.content[i] === null) {
                     return '';
                 }
                 out = data.template
@@ -77,7 +77,7 @@
                 }
                 return out;
             },
-            add: function (id, content, config, append) {
+            add: function (id, content, config, tags, append) {
                 var data = $.extend(true, {}, previewCache.data[id]), index;
                 if (!isArray(content)) {
                     content = content.split(data.delimiter);
@@ -85,10 +85,12 @@
                 if (append) {
                     index = data.content.push(content) - 1;
                     data.config[index] = config;
+                    data.tags[index] = tags;
                 } else {
                     index = content.length;
                     data.content = content;
                     data.config = config;
+                    data.tags = tags;
                 }
                 previewCache.data[id] = data;
                 return index;
@@ -125,8 +127,8 @@
                     previewCache.data[id].config = [];
                     return;
                 }
-                previewCache.data[id].content[index] = undefined;
-                previewCache.data[id].config[index] = undefined;
+                previewCache.data[id].content[index] = null;
+                previewCache.data[id].config[index] = null;
             },
             out: function (id) {
                 var html = '', data = previewCache.data[id], caption, len = previewCache.count(id);
@@ -437,10 +439,7 @@
         init: function (options) {
             var self = this, $el = self.$element, t;
             $.each(options, function (key, value) {
-                if (key === 'maxFileCount' || key === 'maxFileSize') {
-                    self[key] = getNum(value);
-                }
-                self[key] = value;
+                self[key] = (key === 'maxFileCount' || key === 'maxFileSize') ? getNum(value) : value;
             });
             self.fileInputCleared = false;
             self.fileBatchCompleted = true;
@@ -455,7 +454,7 @@
             self.filestack = [];
             self.ajaxRequests = [];
             self.isError = false;
-            self.uploadAborted = false;
+            self.ajaxAborted = false;
             self.dropZoneEnabled = hasDragDropSupport() && self.dropZoneEnabled;
             self.isDisabled = self.$element.attr('disabled') || self.$element.attr('readonly');
             self.isUploadable = hasFileUploadSupport && !isEmpty(self.uploadUrl);
@@ -514,13 +513,15 @@
             return fileName ? '<b>' + fileName + ': </b>' + jqXHR : errMsg;
         },
         raise: function (event, params) {
-            var self = this, e = $.Event(event), out;
+            var self = this, e = $.Event(event), out = false;
             if (params !== undefined) {
                 self.$element.trigger(e, params);
             } else {
                 self.$element.trigger(e);
             }
-            out = e.result || false;
+            if (e.result) {
+                out = true;
+            }
             if (!out) {
                 return;
             }
@@ -541,7 +542,7 @@
                     break;
                 // can trigger filecustomerror to abort upload
                 default:
-                    self.uploadAborted = out;
+                    self.ajaxAborted = out;
                     break;
             }
         },
@@ -630,14 +631,14 @@
         },
         abort: function (params) {
             var self = this, data;
-            if (self.uploadAborted && typeof self.uploadAborted === "object" && self.uploadAborted.message !== undefined) {
-                if (self.uploadAborted.data !== undefined) {
-                    data = self.getOutData({}, self.uploadAborted.data);
+            if (self.ajaxAborted && typeof self.ajaxAborted === "object" && self.ajaxAborted.message !== undefined) {
+                if (self.ajaxAborted.data !== undefined) {
+                    data = self.getOutData({}, self.ajaxAborted.data);
                 } else {
                     data = self.getOutData();
                 }
                 data = $.extend(data, params);
-                self.showUploadError(self.uploadAborted.message, data, 'filecustomerror');
+                self.showUploadError(self.ajaxAborted.message, data, 'filecustomerror');
                 return true;
             }
             return false;
@@ -886,10 +887,14 @@
                 .repl('{other}', otherButtons);
         },
         initPreview: function (isInit) {
-            var self = this, cap, out;
+            var self = this, cap = self.initialCaption || '', out;
             if (!previewCache.count(self.id)) {
                 self.$preview.html('');
-                self.setCaption('');
+                if (isInit) {
+                    self.setCaption(cap);
+                } else {
+                    self.initCaption();
+                }
                 return;
             }
             out = previewCache.out(self.id);
@@ -905,33 +910,40 @@
                 resetProgress = function () {
                     if (self.$preview.find('.kv-file-remove').length === 0) {
                         self.reset();
+                        self.initialCaption = '';
                     }
                 };
+                
             self.$preview.find('.kv-file-remove').each(function () {
-                var $el = $(this), $frame = $el.closest('.file-preview-frame'),
-                    cache = previewCache.data[self.id], index, config, extraData,
-                    vUrl = $el.data('url') || self.deleteUrl, vKey = $el.data('key'), settings,
-                    params = {id: $el.attr('id'), key: vKey, extra: extraData};
+                var $el = $(this), vUrl = $el.data('url') || self.deleteUrl, vKey = $el.data('key');
+                if (isEmpty(vUrl) || vKey === undefined) {
+                    return;
+                }
+                var $frame = $el.closest('.file-preview-frame'), cache = previewCache.data[self.id], 
+                    settings, params,index = $frame.data('fileindex'), config, extraData;
+                index = parseInt(index.replace('init_', ''));
+                config = isEmpty(cache.config) && isEmpty(cache.config[index]) ? null : cache.config[index];
+                extraData = isEmpty(config) || isEmpty(config.extra) ? deleteExtraData : config.extra;
                 if (typeof extraData === "function") {
                     extraData = extraData();
                 }
-                if (vUrl === undefined || vKey === undefined) {
-                    return;
-                }
+                params = {id: $el.attr('id'), key: vKey, extra: extraData};
                 settings = $.extend({
                     url: vUrl,
                     type: 'DELETE',
                     dataType: 'json',
                     data: $.extend({key: vKey}, extraData),
                     beforeSend: function (jqXHR) {
-                        addCss($frame, 'file-uploading');
-                        addCss($el, 'disabled');
+                        self.ajaxAborted = false;
                         self.raise('filepredelete', [vKey, jqXHR, extraData]);
+                        if (self.ajaxAborted) {
+                            jqXHR.abort();
+                        } else {
+                            addCss($frame, 'file-uploading');
+                            addCss($el, 'disabled');
+                        }                            
                     },
                     success: function (data, textStatus, jqXHR) {
-                        index = parseInt($frame.data('fileindex').replace('init_', ''));
-                        config = isEmpty(cache.config) && isEmpty(cache.config[index]) ? null : cache.config[index];
-                        extraData = isEmpty(config) || isEmpty(config.extra) ? deleteExtraData : config.extra;
                         if (data === undefined || data.error === undefined) {
                             previewCache.unset(self.id, index);
                             self.raise('filedeleted', [vKey, jqXHR, extraData]);
@@ -1012,7 +1024,7 @@
             self.setProgress(0);
             addCss(self.$progress, 'hide');
             self.resetErrors(false);
-            self.uploadAborted = false;
+            self.ajaxAborted = false;
             self.ajaxRequests = [];
         },
         cancel: function () {
@@ -1052,16 +1064,16 @@
                 });
                 self.$preview.html('');
                 cap = (!self.overwriteInitial && self.initialCaption.length > 0) ? self.initialCaption : '';
-                self.$caption.html(cap);
+                self.setCaption(cap);
                 self.setEllipsis();
                 self.$caption.attr('title', '');
                 addCss(self.$container, 'file-input-new');
             }
             if (self.$container.find('.file-preview-frame').length === 0) {
-                self.initialCaption = '';
-                self.$caption.html('');
+                if (!self.initCaption()) {
+                    self.$captionContainer.find('.kv-caption-icon').hide();
+                }
                 self.setEllipsis();
-                self.$captionContainer.find('.kv-caption-icon').hide();
             }
             self.hideFileIcon();
             self.raise('filecleared');
@@ -1076,7 +1088,7 @@
                 self.setCaption(out.caption);
             } else {
                 self.$preview.html('');
-                self.$caption.html('');
+                self.initCaption();
             }
         },
         reset: function () {
@@ -1211,20 +1223,22 @@
             }
             chkComplete = function () {
                 var $thumbs = self.$preview.find(PREVIEW_FRAMES + '.file-uploading');
-                if ($thumbs.length > 0 && self.fileBatchCompleted) {
+                if ($thumbs.length > 0 || self.fileBatchCompleted) {
                     return;
                 }
-                previewCache.set(self.id, self.uploadCache.content, self.uploadCache.config, self.uploadCache.tags,
-                    self.uploadCache.append);
-                if (self.hasInitData) {
-                    self.initPreview();
-                    self.initPreviewDeletes();
-                }
-                self.setProgress(100);
-                self.unlock();
-                self.clearFileInput();
-                self.raise('filebatchuploadcomplete', [self.filestack, self.getExtraData()]);
                 self.fileBatchCompleted = true;
+                setTimeout(function() {
+                    previewCache.set(self.id, self.uploadCache.content, self.uploadCache.config, self.uploadCache.tags,
+                        self.uploadCache.append);
+                    if (self.hasInitData) {
+                        self.initPreview();
+                        self.initPreviewDeletes();
+                    }
+                    self.setProgress(100);
+                    self.unlock();
+                    self.clearFileInput();
+                    self.raise('filebatchuploadcomplete', [self.filestack, self.getExtraData()]);
+                }, 100);
             };
             setIndicator = function (icon, msg) {
                 $indicator.html(config[icon]);
@@ -1288,9 +1302,7 @@
                     if (!allFiles) {
                         self.unlock(false);
                     } else {
-                        setTimeout(function () {
-                            chkComplete();
-                        }, 500);
+                        chkComplete();
                     }
                 }, 100);
             };
@@ -1586,7 +1598,7 @@
                 config = isSet(cat, self.previewSettings) ? self.previewSettings[cat] : defaultPreviewSettings[cat],
                 wrapLen = parseInt(self.wrapTextLength, 10), wrapInd = self.wrapIndicator,
                 chkTypes = types.indexOf(cat) >= 0, id, height,
-                chkMimes = isEmpty(mimes) || (!isEmpty(mimes) && isSet(file.type, mimes)),
+                chkMimes = isEmpty(mimes) || (!isEmpty(mimes) && mimes.indexOf(file.type) !== -1),
                 footer = self.renderFileFooter(caption, config.width), modal = '',
                 ind = previewId.slice(previewId.lastIndexOf('-') + 1);
             if (chkTypes && chkMimes) {
@@ -1624,7 +1636,7 @@
             }
         },
         slugDefault: function (text) {
-            return isEmpty(text) ? '' : text.split(/(\\|\/)/g).pop().replace(/[^\w\-.\\\/ ]+/g, '');
+            return isEmpty(text) ? '' : text.split(/(\\|\/)/g).pop().replace(/[^\w\u00C0-\u017F\-.\\\/ ]+/g, '');
         },
         getFileStack: function () {
             var self = this;
@@ -1884,18 +1896,28 @@
                 self.raise('fileimageloaded', previewId);
             });
         },
+        initCaption: function () {
+            var self = this, cap;
+            if (self.overwriteInitial) {
+                self.$caption.html('');
+                return false;
+            }
+            cap = self.initialCaption || '';
+            self.setCaption(cap);
+            return true;
+        },
         setCaption: function (content, isError) {
             var self = this, err = isError || false, title, out;
-            if (isEmpty(content) || self.$caption.length === 0) {
-                return;
-            }
             if (err) {
                 title = $('<div>' + self.msgValidationError + '</div>').text();
                 out = '<span class="' + self.msgValidationErrorClass + '">' +
                 self.msgValidationErrorIcon + title + '</span>';
             } else {
+                if (isEmpty(content) || self.$caption.length === 0) {
+                    return;
+                }
                 title = $('<div>' + content + '</div>').text();
-                out = title + self.getLayoutTemplate('icon');
+                out = self.getLayoutTemplate('icon') + title;
             }
             self.$caption.html(out);
             self.$caption.attr('title', title);
