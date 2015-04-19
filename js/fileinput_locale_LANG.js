@@ -1,5 +1,5 @@
 /*!
- * FileInput <language> Translations - Template file for copying and creating other translations
+ * FileInput <_LANG_> Translations
  *
  * This file must be loaded after 'fileinput.js'. Patterns in braces '{}', or
  * any HTML markup tags in the messages must not be converted or translated.
@@ -11,7 +11,7 @@
 (function ($) {
     "use strict";
 
-    $.fn.fileinput.locales.en = {
+    $.fn.fileinput.locales._LANG_ = {
         fileSingle: 'file',
         filePlural: 'files',
         browseLabel: 'Browse &hellip;',
@@ -39,5 +39,5 @@
         dropZoneTitle: 'Drag & drop files here &hellip;'
     };
 
-    $.extend($.fn.fileinput.defaults, $.fn.fileinput.locales.en);
+    $.extend($.fn.fileinput.defaults, $.fn.fileinput.locales._LANG_);
 })(window.jQuery);

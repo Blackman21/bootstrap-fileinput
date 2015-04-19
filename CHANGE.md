@@ -1,6 +1,6 @@
 version 4.1.8
 =============
-**Date**: 17-Mar-2015
+**Date**: 25-Mar-2015
 
 1. (bug #171): Fix typo for files validation.
 2. (enh #167, #173): New `deleteExtraData` property for ajax deletions.
@@ -47,6 +47,16 @@ version 4.1.8
 24. (enh #212): Revamp preview to use a new preview caching object.
 25. (enh #213): Code cleanup, eliminate change event on clear and properly reset preview cache after ajax deletes.
 26. (enh #215): Set default delete method REST compliant.
+27. (enh #216): Add Hungarian Translations.
+28. (enh #217): Ensure `filebatchselected` event is triggered after FileReader completes reading files selected.
+29. (enh #218): Do not clear preview for ajaxuploads until remove button clicked.
+30. (enh #222): Enhance to include dynamically replaceable thumbnail tags. Two new properties `previewThumbTags` and `initialPreviewThumbTags` will be available for configuration.
+31. (enh #225): Create Russian translations.
+32. (enh #226): Create Spanish (Latin American) translations.
+33. (enh #227): Created Ukranian translations and updated Russian translations.
+34. (enh #228): Created Thai translations.
+35. (enh #229): Created French translations.
+36. (enh #230): More correct initial preview delete reset.
 
 version 4.1.7
 =============
